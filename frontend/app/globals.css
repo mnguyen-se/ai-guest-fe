@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0c1420;
+  --ink-2: #121d2e;
+  --ink-3: #1a2739;
+  --parchment: #f2ede1;
+  --parchment-dim: #cfc9ba;
+  --gold: #c99a4b;
+  --gold-bright: #e0b563;
+  --up: #4f9d69;
+  --down: #c25b4a;
+  --hairline: #2a3a50;
+}
+
+html,
+body {
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: "Fraunces", serif;
+}
+
+.font-mono-data {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.hairline {
+  border-color: var(--hairline);
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-track {
+  animation: ticker-scroll 40s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 4px; }
