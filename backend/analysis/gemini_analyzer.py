@@ -11,7 +11,7 @@ import os
 import json
 import requests
 
-GEMINI_MODEL = "gemini-2.5-flash"  # nhanh, free-tier hào phóng, đủ tốt cho tác vụ này
+GEMINI_MODEL = "gemini-3.5-flash"  # nhanh, free-tier hào phóng, đủ tốt cho tác vụ này
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 SYSTEM_INSTRUCTION = """Bạn là một trợ lý phân tích đầu tư. Nhiệm vụ của bạn KHÔNG phải là

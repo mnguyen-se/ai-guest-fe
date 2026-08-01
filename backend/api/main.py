@@ -7,6 +7,8 @@ FastAPI backend - phục vụ frontend:
 Deploy: Render / Railway free tier (xem README ở thư mục gốc)
 Chạy local: uvicorn api.main:app --reload --port 8000
 """
+from dotenv import load_dotenv
+load_dotenv()
 import os
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException

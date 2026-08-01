@@ -4,6 +4,8 @@ Script điều phối: chạy TẤT CẢ các collector rồi ghi vào Supabase.
 
 Chạy thủ công: python collect_daily.py
 """
+from dotenv import load_dotenv
+load_dotenv()
 import traceback
 from collectors.macro import collect_macro_indicators
 from collectors.markets import collect_market_prices

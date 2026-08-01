@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "C:\Users\ACER\Downloads\ai\investment-assistant-full\investment-assistant\backend\collect_daily.py", line 9, in <module>
+    from collectors.markets import collect_market_prices
+  File "C:\Users\ACER\Downloads\ai\investment-assistant-full\investment-assistant\backend\collectors\markets.py", line 6, in <module>
+    import yfinance as yf
+ModuleNotFoundError: No module named 'yfinance'
+Traceback (most recent call last):
+  File "C:\Users\ACER\Downloads\ai\investment-assistant-full\investment-assistant\backend\collect_daily.py", line 9, in <module>
+    from collectors.markets import collect_market_prices
+  File "C:\Users\ACER\Downloads\ai\investment-assistant-full\investment-assistant\backend\collectors\markets.py", line 6, in <module>
+    import yfinance as yf
+ModuleNotFoundError: No module named 'yfinance'
