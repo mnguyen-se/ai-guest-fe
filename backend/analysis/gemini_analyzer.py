@@ -9,10 +9,15 @@ Lấy free API key tại: https://aistudio.google.com/apikey
 """
 import os
 import json
+import time
 import requests
 
 GEMINI_MODEL = "gemini-3.5-flash"  # nhanh, free-tier hào phóng, đủ tốt cho tác vụ này
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+
+REQUEST_TIMEOUT = 120  # giây - tăng từ 60 lên 120 vì response_schema phức tạp + context dài
+MAX_RETRIES = 2        # số lần thử lại nếu timeout/lỗi tạm thời
+RETRY_BACKOFF_SECONDS = 3  # thời gian chờ giữa các lần retry
 
 SYSTEM_INSTRUCTION = """Bạn là một trợ lý phân tích đầu tư. Nhiệm vụ của bạn KHÔNG phải là
 dự đoán chắc chắn giá cổ phiếu/tài sản sẽ tăng hay giảm. Thay vào đó, bạn phải:
@@ -60,6 +65,7 @@ RESPONSE_SCHEMA = {
 
 
 def _call_gemini(prompt: str) -> dict:
+    """Gọi Gemini API với retry khi bị timeout hoặc lỗi tạm thời (5xx)."""
     api_key = os.environ["GEMINI_API_KEY"]
     payload = {
         "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
@@ -70,16 +76,45 @@ def _call_gemini(prompt: str) -> dict:
             "response_schema": RESPONSE_SCHEMA,
         },
     }
-    resp = requests.post(
-        GEMINI_URL,
-        params={"key": api_key},
-        json=payload,
-        timeout=60,
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
-    return json.loads(text)
+
+    last_error = None
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            resp = requests.post(
+                GEMINI_URL,
+                params={"key": api_key},
+                json=payload,
+                timeout=REQUEST_TIMEOUT,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(text)
+
+        except requests.exceptions.Timeout as e:
+            last_error = e
+            if attempt < MAX_RETRIES:
+                time.sleep(RETRY_BACKOFF_SECONDS * (attempt + 1))
+                continue
+
+        except requests.exceptions.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            last_error = e
+            # Chỉ retry với lỗi tạm thời phía server (5xx). Lỗi 4xx (vd 404, 400)
+            # là lỗi do request sai, retry cũng vô ích -> raise ngay.
+            if status is not None and 500 <= status < 600 and attempt < MAX_RETRIES:
+                time.sleep(RETRY_BACKOFF_SECONDS * (attempt + 1))
+                continue
+            raise
+
+        except (KeyError, IndexError, json.JSONDecodeError) as e:
+            # Response trả về nhưng không đúng cấu trúc mong đợi (vd bị block bởi
+            # safety filter, response rỗng...) -> không nên retry vô hạn, raise
+            # kèm thông tin gốc để dễ debug.
+            raise RuntimeError(f"Gemini trả về response không hợp lệ: {e}") from e
+
+    # Hết số lần retry mà vẫn timeout
+    raise last_error
 
 
 def build_context_block(dataset: dict) -> str:
