@@ -68,12 +68,12 @@ def _call_gemini(prompt: str) -> dict:
     """Gọi Gemini API với retry khi bị timeout hoặc lỗi tạm thời (5xx)."""
     api_key = os.environ["GEMINI_API_KEY"]
     payload = {
-        "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
+        "systemInstruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "response_mime_type": "application/json",
-            "response_schema": RESPONSE_SCHEMA,
+            "responseMimeType": "application/json",
+            "responseSchema": RESPONSE_SCHEMA,
         },
     }
 
