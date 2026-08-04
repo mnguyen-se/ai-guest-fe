@@ -13,7 +13,7 @@ import time
 import requests
 
 GEMINI_MODEL = "gemini-flash-latest"  # nhanh, free-tier hào phóng, đủ tốt cho tác vụ này
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 REQUEST_TIMEOUT = 120  # giây - tăng từ 60 lên 120 vì response_schema phức tạp + context dài
 MAX_RETRIES = 2        # số lần thử lại nếu timeout/lỗi tạm thời
